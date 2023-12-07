@@ -19,7 +19,7 @@ namespace ParkDataLayer.Repositories
         {
             throw new NotImplementedException();
         }
-
+        //text voor push change
         public Huurcontract GeefContract(string id)
         {
             // huis
