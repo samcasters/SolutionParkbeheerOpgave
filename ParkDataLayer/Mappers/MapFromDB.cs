@@ -36,21 +36,22 @@ namespace ParkDataLayer.Mappers
             return contact;
         }
         //huurder
-        public Huurder HuurderFromDataHuurder(DataHuurder dataHuurder)
+        public Huurder HuurderFromDataHuurder(DataHuurder dataHuurder,DataContactGegevens dataContactgegevens)
         {
-            Huurder huurder = new Huurder(dataHuurder.Id, dataHuurder.naam,ContactGegevensFromDataContactGegevens(dataHuurder.Gegevens));
+            Huurder huurder = new Huurder(dataHuurder.Id, dataHuurder.naam,ContactGegevensFromDataContactGegevens(dataContactgegevens));
             return huurder;
         }
         //huurcontact
-        //public Huurcontract HuurContractFromDataHuurcontact(DataHuurContract dataHuurContract)
-        //{
-        //    Huurcontract huurcontract = new Huurcontract(
-        //        dataHuurContract.Id,
-        //        HuurperiodeFromDataHuurperiode(dataHuurContract.HuurPeriode),
-        //        HuurderFromDataHuurder(dataHuurContract.Huurder),
-        //        HuisFromDataHuis(dataHuurContract.Huis)
-        //        );
-        //    return huurcontract;
-        //}
+        public Huurcontract HuurContractFromDataHuurcontact(DataHuurContract dataHuurContract, DataHuurPeriode dataHuurPeriode, 
+            DataHuurder dataHuurder, DataContactGegevens dataContactgegevens, DataHuis dataHuis, DataPark dataPark)
+        {
+            Huurcontract huurcontract = new Huurcontract(
+                dataHuurContract.Id,
+                HuurperiodeFromDataHuurperiode(dataHuurPeriode),
+                HuurderFromDataHuurder(dataHuurder, dataContactgegevens),
+                HuisFromDataHuis(dataHuis,dataPark)
+                );
+            return huurcontract;
+        }
     }
 }

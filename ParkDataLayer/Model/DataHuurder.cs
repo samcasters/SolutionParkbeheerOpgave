@@ -16,6 +16,7 @@ namespace ParkDataLayer.Model
         [AllowNull, MaxLength(100)]
         public string naam { get; set; }
 
+        public string Gegevenstelefoon { get; set; }
         public DataContactGegevens Gegevens { get; set; }
     }
 }

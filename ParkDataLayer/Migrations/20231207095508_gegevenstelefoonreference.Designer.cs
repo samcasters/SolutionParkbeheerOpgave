@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ParkDataLayer.Data;
 
@@ -11,9 +12,11 @@ using ParkDataLayer.Data;
 namespace ParkDataLayer.Migrations
 {
     [DbContext(typeof(ParkeerOpgaveContext))]
-    partial class ParkeerOpgaveContextModelSnapshot : ModelSnapshot
+    [Migration("20231207095508_gegevenstelefoonreference")]
+    partial class gegevenstelefoonreference
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,13 +78,13 @@ namespace ParkDataLayer.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<int>("HuisId")
+                    b.Property<int?>("HuisId")
                         .HasColumnType("int");
 
-                    b.Property<int>("HuurPeriodeId")
+                    b.Property<int?>("HuurPeriodeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("HuurderId")
+                    b.Property<int?>("HuurderId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -172,21 +175,15 @@ namespace ParkDataLayer.Migrations
                 {
                     b.HasOne("ParkDataLayer.Model.DataHuis", "Huis")
                         .WithMany()
-                        .HasForeignKey("HuisId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HuisId");
 
                     b.HasOne("ParkDataLayer.Model.DataHuurPeriode", "HuurPeriode")
                         .WithMany()
-                        .HasForeignKey("HuurPeriodeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HuurPeriodeId");
 
                     b.HasOne("ParkDataLayer.Model.DataHuurder", "Huurder")
                         .WithMany()
-                        .HasForeignKey("HuurderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HuurderId");
 
                     b.Navigation("Huis");
 

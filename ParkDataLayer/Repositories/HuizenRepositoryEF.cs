@@ -14,6 +14,7 @@ namespace ParkDataLayer.Repositories
     {
         ParkeerOpgaveContext context = new ParkeerOpgaveContext();
         MapFromDB MapFromDB = new MapFromDB();
+        MapToDB MapToDB = new MapToDB();
 
         public Huis GeefHuis(int id)
         {
@@ -26,7 +27,16 @@ namespace ParkDataLayer.Repositories
 
         public bool HeeftHuis(string straat, int nummer, Park park)
         {
-            throw new NotImplementedException();
+            var dataPark = context.park.Where(p => p.Id == park.Id ).AsNoTracking().FirstOrDefault();
+            bool heeftHuis = false;
+            foreach(Huis huis in park.Huizen())
+            {
+                if(huis.Straat == straat & huis.Nr == nummer)
+                {
+                    heeftHuis = true; break;
+                }
+            }
+            return heeftHuis;
         }
 
         public bool HeeftHuis(int id)
@@ -36,12 +46,24 @@ namespace ParkDataLayer.Repositories
 
         public void UpdateHuis(Huis huis)
         {
-            throw new NotImplementedException();
+            var dataHuis = context.huis.Where(h => h.Id == huis.Id).AsNoTracking().FirstOrDefault();
+
+            if(dataHuis is DataHuis)
+            {
+                dataHuis.actief = huis.Actief;
+                dataHuis.nr = huis.Nr;
+                dataHuis.straat = huis.Straat;
+                dataHuis.ParkId = huis.Park.Id;
+            }
+            context.SaveChanges();
         }
 
         public Huis VoegHuisToe(Huis h)
         {
-            throw new NotImplementedException();
+            DataHuis dataHuis = MapToDB.DataHuisFromHuis(h);
+            context.huis.Add(dataHuis);
+            context.SaveChanges();
+            return h;
         }
     }
 }
