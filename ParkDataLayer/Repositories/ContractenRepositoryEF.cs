@@ -2,6 +2,7 @@
 using ParkBusinessLayer.Model;
 using ParkDataLayer.Data;
 using ParkDataLayer.Mappers;
+using ParkDataLayer.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -22,17 +23,27 @@ namespace ParkDataLayer.Repositories
         //text voor push change
         public Huurcontract GeefContract(string id)
         {
-            // huis
-            //var dataHuis = context.huis.Where(h => h.Id == id).AsNoTracking().FirstOrDefault();
-            //var dataPark = context.park.Where(p => p.Id == dataHuis.ParkId).AsNoTracking().FirstOrDefault();
-            //var huurcontract = MapFromDB.HuisFromDataHuis(dataHuis, dataPark);
-            //return huurcontract;
+            
+            var dataHuurContract = context.huurContract.Where(h => h.Id == id).AsNoTracking().FirstOrDefault();
+            var dataHuurder = context.huurder.Where(hu => hu.Id == dataHuurContract.HuurderId).AsNoTracking().FirstOrDefault();
+            var dataContactGegevens = context.contactGegevens.Where(c => c.telefoon == dataHuurder.Gegevenstelefoon).AsNoTracking().FirstOrDefault();
+            var DataHuurPeriode = context.huurPeriode.Where(huu => huu.Id == dataHuurContract.HuurPeriodeId).AsNoTracking().FirstOrDefault();
+            var dataHuis = context.huis.Where(hui => hui.Id == dataHuurContract.HuisId).AsNoTracking().FirstOrDefault();
+            var dataPark = context.park.Where(p => p.Id == dataHuis.ParkId).AsNoTracking().FirstOrDefault();
+            Huurcontract huurcontract = MapFromDB.HuurContractFromDataHuurcontact(dataHuurContract, DataHuurPeriode,dataHuurder,dataContactGegevens,dataHuis,dataPark);
+            return huurcontract;
             throw new NotImplementedException();
         }
 
         public List<Huurcontract> GeefContracten(DateTime dtBegin, DateTime? dtEinde)
         {
-            throw new NotImplementedException();
+            IEnumerable<DataHuurContract> dataHuurContracten = context.huurContract.Where(h => h.HuurPeriode.startDatum >= dtBegin & h.HuurPeriode.eindDatum <= dtEinde).AsNoTracking();
+            List<Huurcontract> huurcontracten = new List<Huurcontract>();
+            foreach (var huurcontract in dataHuurContracten)
+            {
+                huurcontracten.Add(GeefContract(huurcontract.Id));
+            }
+            return huurcontracten;
         }
 
         public bool HeeftContract(DateTime startDatum, int huurderid, int huisid)
@@ -42,17 +53,31 @@ namespace ParkDataLayer.Repositories
 
         public bool HeeftContract(string id)
         {
-            throw new NotImplementedException();
+            bool heeftContract = false;
+            var DataHuurContract = context.huurContract.Where(h => h.Id == id).AsNoTracking().FirstOrDefault();
+            if (DataHuurContract is DataHuurContract)
+            {
+                heeftContract = true;
+            }
+            return heeftContract;
         }
 
         public void UpdateContract(Huurcontract contract)
         {
-            throw new NotImplementedException();
+            var newDataHuurcontract = MapToDB.DataHuurContractFromHuurcontact(contract);
+            var oldDataHuurContract = context.huurContract.Where(h => h.Id == newDataHuurcontract.Id).AsNoTracking().FirstOrDefault();
+            if(newDataHuurcontract is DataHuurContract)
+            {
+                oldDataHuurContract = newDataHuurcontract;
+            }
+            context.SaveChanges();
         }
 
         public void VoegContractToe(Huurcontract contract)
         {
-            throw new NotImplementedException();
+            var dataHuurContract = MapToDB.DataHuurContractFromHuurcontact(contract);
+            context.huurContract.Add(dataHuurContract);
+            context.SaveChanges();
         }
     }
 }
