@@ -127,16 +127,19 @@ namespace StartUp
                 case"11":
                     // huis opvragen
                     GeefHuisVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
                 case "12":
                     //huurder opvragen
                     GeefHuurderVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
                 case "13":
                     //contract opvragen
                     GeefContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
 
@@ -144,16 +147,19 @@ namespace StartUp
                 case "21":
                     //huis aanmaken
                     huizenRepository.VoegHuisToe(MaakHuisAan(context, huizenRepository, huurderRepository, contractenRepository));
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
                 case "22":
                     //huurder aanmaken
                     huurderRepository.VoegHuurderToe(MaakHuurderAan(context, huizenRepository, huurderRepository, contractenRepository));
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
                 case "23":
                     //contract aanmaken
                     contractenRepository.VoegContractToe(MaakContractAan(context, huizenRepository, huurderRepository, contractenRepository));
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
 
@@ -161,16 +167,19 @@ namespace StartUp
                 case "31":
                     //huis aanpasen
                     PasHuisAanVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
                 case "32":
                     //huurder aanpasen
                     PasHuurderAanVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
                 case "33":
                     //contract aanpasen
                     PasContractAanVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
 
@@ -178,16 +187,19 @@ namespace StartUp
                 case "41":
                     //huis verwijderen
                     VerwijderHuisVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
                 case "42":
                     //huurder verwijderen
                     VerwijderHuurderVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
                 case "43":
                     //contract verwijderen
                     VerwijderContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
 
@@ -196,10 +208,10 @@ namespace StartUp
                     break;
             }
         }
-        static void DeleteAllRowsFromAllTables()
-        {
+        //static void DeleteAllRowsFromAllTables()
+        //{
 
-        }
+        //}
         static void InitializeDatabase(ParkeerOpgaveContext context)
         {
             ///data
@@ -286,6 +298,11 @@ namespace StartUp
             }
             return dt;
         }
+        static void enterToContinue()
+        {
+            Console.WriteLine("enter om door te gaan");
+            Console.Read();
+        }
 
         //Opvragen
         static Huis GeefHuisVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
@@ -303,8 +320,6 @@ namespace StartUp
             }
             Huis huis = huizenRepository.GeefHuis(id);
             Console.WriteLine($"HUIS:{huis.Id}: Str={huis.Straat},Nr={huis.Nr},Prk={huis.Park.Naam}");
-            Console.WriteLine("enter om door te gaan");
-            Console.Read();
             return huis;
         }
         static Huurder GeefHuurderVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
@@ -322,8 +337,6 @@ namespace StartUp
             }
             Huurder huurder = huurderRepository.GeefHuurder(id);
             Console.WriteLine($"HUURDER:{huurder.Id}: naam={huurder.Naam},adr={huurder.Contactgegevens.Adres},email={huurder.Contactgegevens.Email},tel={huurder.Contactgegevens.Tel}");
-            Console.WriteLine("enter om door te gaan");
-            Console.Read();
             return huurder;
         }
         static Huurcontract GeefContractVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
@@ -349,20 +362,21 @@ namespace StartUp
         static Huis MaakHuisAan(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
         {
             
-            Console.Write("huis-straat  : ");
+            Console.Write("huis-straat : ");
             string huisStraat = Console.ReadLine();
-            int huisNr = VraagVoorInt("huis-nr      : ");
-            Console.Write("park-naam    : ");
+
+            int huisNr = VraagVoorInt("huis-nr : ");
+            
+            Console.Write("park-naam : ");
             string parkNaam = Console.ReadLine();
+            
             Console.Write("park-locatie : ");
             string parkLocatie = Console.ReadLine();
 
-            Park newPark = new Park(null,parkNaam,parkLocatie) ;
+            Park newPark = new Park(parkNaam,parkLocatie) ;
             Huis newHuis = new Huis(huisStraat,huisNr,newPark);
 
             Console.WriteLine($"HUIS:{newHuis.Id}: Str={newHuis.Straat},Nr={newHuis.Nr},Prk={newHuis.Park.Naam}");
-            Console.WriteLine("enter om door te gaan");
-            Console.Read();
             return newHuis;
         }
         static Huurder MaakHuurderAan(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
@@ -380,8 +394,6 @@ namespace StartUp
             Huurder newHuurder = new Huurder(huurderNaam,newContactgegevens);
 
             Console.WriteLine($"HUURDER:{newHuurder.Id}: naam={newHuurder.Naam},adr={newHuurder.Contactgegevens.Adres},email={newHuurder.Contactgegevens.Email},tel={newHuurder.Contactgegevens.Tel}");
-            Console.WriteLine("enter om door te gaan");
-            Console.Read();
             return newHuurder;
         }
         static Huurcontract MaakContractAan(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
@@ -396,8 +408,6 @@ namespace StartUp
             Huurcontract newHuurcontract = new Huurcontract(null,newHuurperiode,huurder,huis);
 
             Console.WriteLine($"HUURCONTRACT:{newHuurcontract.Id}: huisId={newHuurcontract.Huis.Id},huurderId={newHuurcontract.Huurder.Id},start={newHuurcontract.Huurperiode.StartDatum},einde={newHuurcontract.Huurperiode.EindDatum}");
-            Console.WriteLine("enter om door te gaan");
-            Console.Read();
             return newHuurcontract;
         }
         //Aanpasen
@@ -428,17 +438,11 @@ namespace StartUp
         //Verwijderen
         static void VerwijderHuisVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
         {
-
             Console.Write($"huisen kunnen niet verwijderd worden");
-            Console.WriteLine("enter om door te gaan");
-            Console.Read();
         }
         static void VerwijderHuurderVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
         {
-
             Console.Write($"hurders kunnen niet verwijderd worden");
-            Console.WriteLine("enter om door te gaan");
-            Console.Read();
         }
         static void VerwijderContractVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
         {

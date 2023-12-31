@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ParkDataLayer.Mappers
 {
-    internal class MapFromDB
+    public class MapFromDB
     {
         //huurperiode
         public Huurperiode HuurperiodeFromDataHuurperiode(DataHuurPeriode dataHuurPeriode)

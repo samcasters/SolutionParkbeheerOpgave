@@ -10,13 +10,12 @@ namespace ParkBusinessLayer.Model
         public string Locatie { get; private set; }
         private List<Huis> _huis =new List<Huis>(){ };
 
-        public Park(string id, string naam, string locatie, List<Huis> huis) : this(id,naam,locatie)
-        {
-            _huis = huis;
-        }
-        public Park(string id, string naam, string locatie)
+        public Park(string id, string naam, string locatie) : this(naam,locatie)
         {
             ZetId(id);
+        }
+        public Park(string naam, string locatie)
+        {
             ZetNaam(naam);
             Locatie = locatie;
         }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ParkDataLayer.Mappers
 {
-    internal class MapToDB
+    public class MapToDB
     {
         //huurperiode
         public DataHuurPeriode DataHuurPeriodeFromHuurperiode(Huurperiode huurperiode)
@@ -26,7 +26,7 @@ namespace ParkDataLayer.Mappers
         //huis
         public DataHuis DataHuisFromHuis(Huis Huis)
         {
-            DataHuis dataHuis = new DataHuis() {Id = Huis.Id, actief = Huis.Actief, nr = Huis.Nr, Park = DataParkFromPark(Huis.Park), straat = Huis.Straat };
+            DataHuis dataHuis = new DataHuis() {Id = Huis.Id, actief = Huis.Actief, nr = Huis.Nr,ParkId = DataParkFromPark(Huis.Park).Id, Park = DataParkFromPark(Huis.Park), straat = Huis.Straat };
             return dataHuis;
         }
         //contactgegevens
@@ -38,16 +38,19 @@ namespace ParkDataLayer.Mappers
         //huurder
         public DataHuurder DataHuurderFromHuurder(Huurder huurder)
         {
-            DataHuurder dataHuurder = new DataHuurder() {Id = huurder.Id, naam = huurder.Naam, Gegevens = DataContactGegevensFromContactGegevens(huurder.Contactgegevens)};
+            DataHuurder dataHuurder = new DataHuurder() {Id = huurder.Id, naam = huurder.Naam,Gegevenstelefoon = DataContactGegevensFromContactGegevens(huurder.Contactgegevens).telefoon, Gegevens = DataContactGegevensFromContactGegevens(huurder.Contactgegevens)};
             return dataHuurder;
         }
         //huurcontact
         public DataHuurContract DataHuurContractFromHuurcontact(Huurcontract huurcontract)
         {
             DataHuurContract dataHuurContract = new DataHuurContract() { 
-                Id = huurcontract.Id, 
+                Id = huurcontract.Id,
+                HuisId = DataHuisFromHuis(huurcontract.Huis).Id,
                 Huis = DataHuisFromHuis(huurcontract.Huis), 
+                HuurderId = DataHuurderFromHuurder(huurcontract.Huurder).Id,
                 Huurder = DataHuurderFromHuurder(huurcontract.Huurder), 
+                HuurPeriodeId = DataHuurPeriodeFromHuurperiode(huurcontract.Huurperiode).Id,
                 HuurPeriode = DataHuurPeriodeFromHuurperiode(huurcontract.Huurperiode) 
             };
             return dataHuurContract;
