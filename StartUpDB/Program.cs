@@ -36,8 +36,9 @@ namespace StartUp
                           $"2:Aanmaken\n" +
                           $"3:Aanpasen\n" +
                           $"4:Verwijderen\n" +
-                          $"5:Reset Databank\n" +
-                          $"6:Exit\n\n" +
+                          $"5:Alles Opvragen\n" +
+                          $"6:Reset Databank\n" +
+                          $"7:Exit\n\n" +
                           $"Geef 1tot6 :");
             string input = Console.ReadLine();
             int option;
@@ -65,11 +66,16 @@ namespace StartUp
                     ExecuteOparation(OperationNr, context, huizenRepository, huurderRepository, contractenRepository);
                     break;
                 case "5":
+                    option = ToonOptions("Alles Opvragen");
+                    OperationNr = $"4{option}";
+                    ExecuteOparation(OperationNr, context, huizenRepository, huurderRepository, contractenRepository);
+                    break;
+                case "6":
                     InitializeDatabase(context);
                     Console.WriteLine("databank reset succesvol");
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
-                case "6":
+                case "7":
                     Environment.Exit(0);
                     break;
                 case "cls":
@@ -197,6 +203,26 @@ namespace StartUp
                     MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
                     break;
                 case "43":
+                    //contract verwijderen
+                    VerwijderContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
+                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
+                    break;
+
+                //ALLES OPVRAGEN
+                case "51":
+                    //huis verwijderen
+                    VerwijderHuisVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
+                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
+                    break;
+                case "52":
+                    //huurder verwijderen
+                    VerwijderHuurderVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                    enterToContinue();
+                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
+                    break;
+                case "53":
                     //contract verwijderen
                     VerwijderContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
                     enterToContinue();
@@ -461,5 +487,18 @@ namespace StartUp
             Console.WriteLine("enter om door te gaan");
             Console.Read();
         }
+        //Alles Opvragen
+        //static void GeefAlleHuisen(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        //{
+        //}
+        //static void GeefAlleHuurders(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        //{
+        //}
+        //static void GeefAlleContracten(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        //{
+        //}
+
+
+
     }
 }
