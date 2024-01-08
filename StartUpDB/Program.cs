@@ -1,4 +1,5 @@
-﻿using ParkBusinessLayer.Model;
+﻿using ParkBusinessLayer.Interfaces;
+using ParkBusinessLayer.Model;
 using ParkDataLayer.Data;
 using ParkDataLayer.Migrations;
 using ParkDataLayer.Model;
@@ -15,223 +16,213 @@ namespace StartUp
 {
     internal class Program
     {
-        enum option { Huis,Park,Huurder,ContactGegevens,HuurPeriode,HuurContract}
-
         static void Main(string[] args)
+        {
+            
+            while(true)
+            {
+                try
+                {
+                    MainMenu();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"main:  {ex}");
+                }
+            }
+            
+        }
+
+        static void MainMenu()
         {
             using ParkeerOpgaveContext context = new ParkeerOpgaveContext();
             HuizenRepositoryEF huizenRepository = new HuizenRepositoryEF();
             HuurderRepositoryEF huurderRepository = new HuurderRepositoryEF();
             ContractenRepositoryEF contractenRepository = new ContractenRepositoryEF();
-            //InitializeDatabase(context);
-            //GeefHuisVanId(1,huizenRepository);
-            MainMenu(context,huizenRepository,huurderRepository,contractenRepository);
-        }
-
-        static void MainMenu(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository,HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
-        {
-            Console.Clear();
-            Console.Write($"Wat will je doen?\n" +
-                          $"1:Opvraagen\n" +
-                          $"2:Aanmaken\n" +
-                          $"3:Aanpasen\n" +
-                          $"4:Verwijderen\n" +
-                          $"5:Alles Opvragen\n" +
-                          $"6:Reset Databank\n" +
-                          $"7:Exit\n\n" +
-                          $"Geef 1tot6 :");
-            string input = Console.ReadLine();
-            int option;
-            string OperationNr;
-            switch (input)
+            try
             {
-                case "1":
-                    option = ToonOptions("Opvragen");
-                    OperationNr = $"1{option}";
-                    ExecuteOparation(OperationNr,context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "2":
-                    option = ToonOptions("Aanmaken");
-                    OperationNr = $"2{option}";
-                    ExecuteOparation(OperationNr, context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "3":
-                    option = ToonOptions("Aanpasen");
-                    OperationNr = $"3{option}";
-                    ExecuteOparation(OperationNr, context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "4":
-                    option = ToonOptions("Verwijderen");
-                    OperationNr = $"4{option}";
-                    ExecuteOparation(OperationNr, context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "5":
-                    option = ToonOptions("Alles Opvragen");
-                    OperationNr = $"4{option}";
-                    ExecuteOparation(OperationNr, context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "6":
-                    InitializeDatabase(context);
-                    Console.WriteLine("databank reset succesvol");
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "7":
-                    Environment.Exit(0);
-                    break;
-                case "cls":
-                    Console.Clear();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "help":
-                    Console.WriteLine("\nlorem ipsum \n\nEnter to continue\n");
-                    Console.ReadLine();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                default:
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
+                Console.Clear();
+                Console.Write($"Wat will je doen?\n" +
+                              $"1:Opvraagen\n" +
+                              $"2:Aanmaken\n" +
+                              $"3:Aanpasen\n" +
+                              $"4:Verwijderen\n" +
+                              $"5:Exit\n\n" +
+                              $"Geef 1tot6 :");
+                string input = Console.ReadLine();
+                int option;
+                string OperationNr;
+                switch (input)
+                {
+                    case "1":
+                        option = ToonOptions("Opvragen");
+                        OperationNr = $"1{option}";
+                        ExecuteOparation(OperationNr, context, huizenRepository, huurderRepository, contractenRepository);
+                        break;
+                    case "2":
+                        option = ToonOptions("Aanmaken");
+                        OperationNr = $"2{option}";
+                        ExecuteOparation(OperationNr, context, huizenRepository, huurderRepository, contractenRepository);
+                        break;
+                    case "3":
+                        option = ToonOptions("Aanpasen");
+                        OperationNr = $"3{option}";
+                        ExecuteOparation(OperationNr, context, huizenRepository, huurderRepository, contractenRepository);
+                        break;
+                    case "4":
+                        option = ToonOptions("Verwijderen");
+                        OperationNr = $"4{option}";
+                        ExecuteOparation(OperationNr, context, huizenRepository, huurderRepository, contractenRepository);
+                        break;
+                    case "5":
+                        Environment.Exit(0);
+                        break;
+                    case "cls":
+                        Console.Clear();
+                        MainMenu();
+                        break;
+                    case "help":
+                        Console.WriteLine("\nlorem ipsum \n\nEnter to continue\n");
+                        Console.ReadLine();
+                        MainMenu();
+                        break;
+                    default:
+                        MainMenu();
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
             }
         }
         static int ToonOptions(string extraInfo)
         {
-            Console.Clear();
-            Console.Write($"{extraInfo}\n" +
-                          $"1:Huis\n" +
-                          $"2:Huurder\n" +
-                          $"3:HuurContract\n\n" +
-                          $"Geef 1tot3 :");
-            string input = Console.ReadLine();
-            int inputInt;
-            bool isInt = int.TryParse(input, out inputInt);
-            if (isInt)
+            try
             {
-                if (inputInt > 0 & inputInt < 4)
+                Console.Clear();
+                Console.Write($"{extraInfo}\n" +
+                              $"1:Huis\n" +
+                              $"2:Huurder\n" +
+                              $"3:HuurContract\n\n" +
+                              $"Geef 1tot3 :");
+                string input = Console.ReadLine();
+                int inputInt;
+                bool isInt = int.TryParse(input, out inputInt);
+                if (isInt)
                 {
-                    return inputInt;
+                    if (inputInt > 0 & inputInt < 4)
+                    {
+                        return inputInt;
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine($"{input} is geen geldig getal. het getal moet van 1 tot 3 zijn");
+                        return ToonOptions(extraInfo);
+                    }
                 }
                 else
                 {
                     Console.Clear();
-                    Console.WriteLine($"{input} is geen geldig getal. het getal moet van 1 tot 3 zijn");
+                    Console.WriteLine($"{input} is geen geldig getal");
                     return ToonOptions(extraInfo);
                 }
+                
             }
-            else
+            catch (Exception ex)
             {
-                Console.Clear();
-                Console.WriteLine($"{input} is geen geldig getal");
-                return ToonOptions(extraInfo);
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
             }
-            
+            return ToonOptions(extraInfo);
         }
         static void ExecuteOparation(string oparationNr, ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
         {
-            Console.Clear();
-            switch (oparationNr)
+            try
             {
-                //OPVRAGEN
-                case"11":
-                    // huis opvragen
-                    GeefHuisVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "12":
-                    //huurder opvragen
-                    GeefHuurderVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "13":
-                    //contract opvragen
-                    GeefContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
+                Console.Clear();
+                switch (oparationNr)
+                {
+                    //OPVRAGEN
+                    case "11":
+                        // huis opvragen
+                        GeefHuisVanId(huizenRepository);
+                        enterToContinue();
+                        break;
+                    case "12":
+                        //huurder opvragen
+                        GeefHuurderVanId(huurderRepository);
+                        enterToContinue();
+                        break;
+                    case "13":
+                        //contract opvragen
+                        GeefContractVanId(contractenRepository);
+                        enterToContinue();
+                        break;
 
-                //AANMAKEN
-                case "21":
-                    //huis aanmaken
-                    huizenRepository.VoegHuisToe(MaakHuisAan(context, huizenRepository, huurderRepository, contractenRepository));
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "22":
-                    //huurder aanmaken
-                    huurderRepository.VoegHuurderToe(MaakHuurderAan(context, huizenRepository, huurderRepository, contractenRepository));
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "23":
-                    //contract aanmaken
-                    contractenRepository.VoegContractToe(MaakContractAan(context, huizenRepository, huurderRepository, contractenRepository));
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
+                    //AANMAKEN
+                    case "21":
+                        //huis aanmaken
+                        huizenRepository.VoegHuisToe(MaakHuisAan(huizenRepository));
+                        enterToContinue();
+                        break;
+                    case "22":
+                        //huurder aanmaken
+                        huurderRepository.VoegHuurderToe(MaakHuurderAan(huurderRepository));
+                        enterToContinue();
+                        break;
+                    case "23":
+                        //contract aanmaken
+                        contractenRepository.VoegContractToe(MaakContractAan(huizenRepository, huurderRepository, contractenRepository));
+                        enterToContinue();
+                        break;
 
-                //AANPASEN
-                case "31":
-                    //huis aanpasen
-                    PasHuisAanVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "32":
-                    //huurder aanpasen
-                    PasHuurderAanVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "33":
-                    //contract aanpasen
-                    PasContractAanVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
+                    //AANPASEN
+                    case "31":
+                        //huis aanpasen
+                        PasHuisAanVanId(huizenRepository);
+                        enterToContinue();
+                        break;
+                    case "32":
+                        //huurder aanpasen
+                        PasHuurderAanVanId(huurderRepository);
+                        enterToContinue();
+                        break;
+                    case "33":
+                        //contract aanpasen
+                        PasContractAanVanId(huizenRepository, huurderRepository, contractenRepository);
+                        enterToContinue();
+                        break;
 
-                //VERWIJDEREN
-                case "41":
-                    //huis verwijderen
-                    VerwijderHuisVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "42":
-                    //huurder verwijderen
-                    VerwijderHuurderVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "43":
-                    //contract verwijderen
-                    VerwijderContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-
-                //ALLES OPVRAGEN
-                case "51":
-                    //huis verwijderen
-                    VerwijderHuisVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "52":
-                    //huurder verwijderen
-                    VerwijderHuurderVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-                case "53":
-                    //contract verwijderen
-                    VerwijderContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
-                    enterToContinue();
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
-
-                default:
-                    MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
-                    break;
+                    //VERWIJDEREN
+                    case "41":
+                        //huis verwijderen
+                        VerwijderHuisVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                        enterToContinue();
+                        break;
+                    case "42":
+                        //huurder verwijderen
+                        VerwijderHuurderVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                        enterToContinue();
+                        break;
+                    case "43":
+                        //contract verwijderen
+                        VerwijderContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                        enterToContinue();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
             }
         }
         //static void DeleteAllRowsFromAllTables()
@@ -289,214 +280,359 @@ namespace StartUp
 
             context.SaveChanges();
         }
-        static void VraagvoorTerugNaarMainMenuTeGaan(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        static void VraagvoorTerugNaarMainMenuTeGaan()
         {
-            Console.Write("type back om terug naar main menu te gaan : ");
-            string input = Console.ReadLine();
-            if(input.ToLower() == "back")
+            try
             {
-                Console.Clear();
-                MainMenu(context, huizenRepository, huurderRepository, contractenRepository);
+                Console.Write("type BACK om terug naar main menu te gaan : ");
+                string input = Console.ReadLine();
+                if (input.ToLower().Trim() == "back")
+                {
+                    Console.Clear();
+                    MainMenu();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
             }
         }
         static int VraagVoorInt(string vraag)
         {
-            bool isInt = false;
-            Console.Write(vraag);
-            string input = Console.ReadLine();
-            int output = 0;
-            while (!isInt)
+            try
             {
-                isInt = int.TryParse(input, out output);
+                bool isInt = false;
+                Console.Write(vraag);
+                string input = Console.ReadLine();
+                int output = 0;
+                while (!isInt)
+                {
+                    isInt = int.TryParse(input, out output);
+                }
+                return output;
             }
-            return output;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
+            }
+            return VraagVoorInt(vraag);
         }
         static DateTime VraagVoorDateTime(string vraag)
         {
-            
-            Console.Write(vraag);
-            string dtString = Console.ReadLine();
-            DateTime dt = DateTime.MinValue;
-            bool isDt = false;
-            while(!isDt)
+            try
             {
-               isDt = DateTime.TryParse(dtString, out dt);
+                Console.Write(vraag);
+                string dtString = Console.ReadLine();
+                DateTime dt = DateTime.MinValue;
+                bool isDt = false;
+                while (!isDt)
+                {
+                    isDt = DateTime.TryParse(dtString, out dt);
+                }
+                return dt;
             }
-            return dt;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
+            }
+            return VraagVoorDateTime(vraag);
         }
         static void enterToContinue()
         {
-            Console.WriteLine("enter om door te gaan");
-            Console.Read();
+            try
+            {
+                Console.WriteLine("enter om door te gaan");
+                Console.Read();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
+            }
         }
 
+        
         //Opvragen
-        static Huis GeefHuisVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        static Huis GeefHuisVanId(HuizenRepositoryEF huizenRepository)
         {
-
-            Console.Write($"huisId: ");
-            string huisId = Console.ReadLine();
-            bool isInt = int.TryParse(huisId, out int id);
-            if (!isInt) 
+            try
             {
-                Console.Clear();
-                Console.WriteLine($"{huisId} geen geldig getal");
-                VraagvoorTerugNaarMainMenuTeGaan(context, huizenRepository, huurderRepository, contractenRepository);
-                GeefHuisVanId(context,huizenRepository,huurderRepository,contractenRepository);
+                Console.Write($"huisId: ");
+                string huisId = Console.ReadLine();
+                bool isInt = int.TryParse(huisId, out int id);
+                if (!isInt)
+                {
+                    Console.Clear();
+                    Console.WriteLine($"{huisId} geen geldig getal");
+                    VraagvoorTerugNaarMainMenuTeGaan();
+                    GeefHuisVanId(huizenRepository);
+                }
+                Huis huis = huizenRepository.GeefHuis(id);
+                Console.WriteLine($"HUIS:{huis.Id}: Str={huis.Straat},Nr={huis.Nr},Prk={huis.Park.Naam}");
+                return huis;
             }
-            Huis huis = huizenRepository.GeefHuis(id);
-            Console.WriteLine($"HUIS:{huis.Id}: Str={huis.Straat},Nr={huis.Nr},Prk={huis.Park.Naam}");
-            return huis;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
+            }
+            return GeefHuisVanId(huizenRepository);
         }
-        static Huurder GeefHuurderVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        static Huurder GeefHuurderVanId(HuurderRepositoryEF huurderRepository)
         {
-
-            Console.Write($"hurderId: ");
-            string huurderId = Console.ReadLine();
-            bool isInt = int.TryParse(huurderId, out int id);
-            if (!isInt)
+            try
             {
-                Console.Clear();
-                Console.WriteLine($"{huurderId} geen geldig getal");
-                VraagvoorTerugNaarMainMenuTeGaan(context, huizenRepository, huurderRepository, contractenRepository);
-                GeefHuurderVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                Console.Write($"hurderId: ");
+                string huurderId = Console.ReadLine();
+                bool isInt = int.TryParse(huurderId, out int id);
+                if (!isInt)
+                {
+                    Console.Clear();
+                    Console.WriteLine($"{huurderId} geen geldig getal");
+                    VraagvoorTerugNaarMainMenuTeGaan();
+                    GeefHuurderVanId(huurderRepository);
+                }
+                Huurder huurder = huurderRepository.GeefHuurder(id);
+                Console.WriteLine($"HUURDER:{huurder.Id}: naam={huurder.Naam},adr={huurder.Contactgegevens.Adres},email={huurder.Contactgegevens.Email},tel={huurder.Contactgegevens.Tel}");
+                return huurder;
             }
-            Huurder huurder = huurderRepository.GeefHuurder(id);
-            Console.WriteLine($"HUURDER:{huurder.Id}: naam={huurder.Naam},adr={huurder.Contactgegevens.Adres},email={huurder.Contactgegevens.Email},tel={huurder.Contactgegevens.Tel}");
-            return huurder;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
+            }
+            return GeefHuurderVanId(huurderRepository);
         }
-        static Huurcontract GeefContractVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        static Huurcontract GeefContractVanId(ContractenRepositoryEF contractenRepository)
         {
-
-            Console.Write($"contractId: ");
-            string contractId = Console.ReadLine();
-            
-            if (contractenRepository.HeeftContract(contractId))
+            try
             {
-                Console.Clear();
-                Console.WriteLine($"geen contract gevonden onder {contractId}");
-                VraagvoorTerugNaarMainMenuTeGaan(context, huizenRepository, huurderRepository, contractenRepository);
-                GeefContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                Console.Write($"contractId: ");
+                string contractId = Console.ReadLine();
+
+                if (contractenRepository.HeeftContract(contractId))
+                {
+                    Console.Clear();
+                    Console.WriteLine($"geen contract gevonden onder {contractId}");
+                    VraagvoorTerugNaarMainMenuTeGaan();
+                    GeefContractVanId(contractenRepository);
+                }
+                Huurcontract huurcontract = contractenRepository.GeefContract(contractId);
+                Console.WriteLine($"HUURCONTRACT:{huurcontract.Id}: huisId={huurcontract.Huis.Id},huurderId={huurcontract.Huurder.Id},start={huurcontract.Huurperiode.StartDatum},einde={huurcontract.Huurperiode.EindDatum}");
+                Console.WriteLine("enter om door te gaan");
+                Console.Read();
+                return huurcontract;
             }
-            Huurcontract huurcontract = contractenRepository.GeefContract(contractId);
-            Console.WriteLine($"HUURCONTRACT:{huurcontract.Id}: huisId={huurcontract.Huis.Id},huurderId={huurcontract.Huurder.Id},start={huurcontract.Huurperiode.StartDatum},einde={huurcontract.Huurperiode.EindDatum}");
-            Console.WriteLine("enter om door te gaan");
-            Console.Read();
-            return huurcontract;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
+            }
+            return GeefContractVanId(contractenRepository);
         }
+        
         //Aanmaken
-        static Huis MaakHuisAan(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        static Huis MaakHuisAan(HuizenRepositoryEF huizenRepository)
         {
-            
-            Console.Write("huis-straat : ");
-            string huisStraat = Console.ReadLine();
+            try
+            {
+                Console.Write("huis-straat : ");
+                string huisStraat = Console.ReadLine();
 
-            int huisNr = VraagVoorInt("huis-nr : ");
-            
-            Console.Write("park-naam : ");
-            string parkNaam = Console.ReadLine();
-            
-            Console.Write("park-locatie : ");
-            string parkLocatie = Console.ReadLine();
+                int huisNr = VraagVoorInt("huis-nr : ");
 
-            Park newPark = new Park(parkNaam,parkLocatie) ;
-            Huis newHuis = new Huis(huisStraat,huisNr,newPark);
+                Console.Write("park-naam : ");
+                string parkNaam = Console.ReadLine();
 
-            Console.WriteLine($"HUIS:{newHuis.Id}: Str={newHuis.Straat},Nr={newHuis.Nr},Prk={newHuis.Park.Naam}");
-            return newHuis;
+                Console.Write("park-locatie : ");
+                string parkLocatie = Console.ReadLine();
+
+                Park newPark = new Park(parkNaam, parkLocatie);
+                Huis newHuis = new Huis(huisStraat, huisNr, newPark);
+
+                Console.WriteLine($"HUIS:{newHuis.Id}: Str={newHuis.Straat},Nr={newHuis.Nr},Prk={newHuis.Park.Naam}");
+                huizenRepository.VoegHuisToe(newHuis);
+                return newHuis;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
+            }
+            return MaakHuisAan(huizenRepository);
         }
-        static Huurder MaakHuurderAan(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        static Huurder MaakHuurderAan(HuurderRepositoryEF huurderRepository)
         {
-            Console.Write("huurder-naam  : ");
-            string huurderNaam = Console.ReadLine();
-            Console.Write("contact-tel   : ");
-            string contactTel = Console.ReadLine();
-            Console.Write("contact-email : ");
-            string contactEmail = Console.ReadLine();
-            Console.Write("contact-adres : ");
-            string contactAdres = Console.ReadLine();
+            try
+            {
+                Console.Write("huurder-naam  : ");
+                string huurderNaam = Console.ReadLine();
+                Console.Write("contact-tel   : ");
+                string contactTel = Console.ReadLine();
+                Console.Write("contact-email : ");
+                string contactEmail = Console.ReadLine();
+                Console.Write("contact-adres : ");
+                string contactAdres = Console.ReadLine();
 
-            Contactgegevens newContactgegevens = new Contactgegevens(contactEmail,contactTel,contactAdres);
-            Huurder newHuurder = new Huurder(huurderNaam,newContactgegevens);
+                Contactgegevens newContactgegevens = new Contactgegevens(contactEmail, contactTel, contactAdres);
+                Huurder newHuurder = new Huurder(huurderNaam, newContactgegevens);
 
-            Console.WriteLine($"HUURDER:{newHuurder.Id}: naam={newHuurder.Naam},adr={newHuurder.Contactgegevens.Adres},email={newHuurder.Contactgegevens.Email},tel={newHuurder.Contactgegevens.Tel}");
-            return newHuurder;
+                Console.WriteLine($"HUURDER:{newHuurder.Id}: naam={newHuurder.Naam},adr={newHuurder.Contactgegevens.Adres},email={newHuurder.Contactgegevens.Email},tel={newHuurder.Contactgegevens.Tel}");
+                huurderRepository.VoegHuurderToe(newHuurder);
+                return newHuurder;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
+            }
+            return MaakHuurderAan(huurderRepository);
         }
-        static Huurcontract MaakContractAan(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        static Huurcontract MaakContractAan(HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
         {
-            
-            Huis huis = GeefHuisVanId(context, huizenRepository, huurderRepository, contractenRepository);
-            Huurder huurder = GeefHuurderVanId(context, huizenRepository, huurderRepository, contractenRepository);
-            DateTime huurperiodeStartDatum = VraagVoorDateTime("huurperiode-StartDatum  : ");
-            int huurperiodeAantalDagen = VraagVoorInt("huurperiode-aantaldagen : ");
+            try
+            {
+                Huis huis = GeefHuisVanId(huizenRepository);
+                Huurder huurder = GeefHuurderVanId(huurderRepository);
+                DateTime huurperiodeStartDatum = VraagVoorDateTime("huurperiode-StartDatum  : ");
+                int huurperiodeAantalDagen = VraagVoorInt("huurperiode-aantaldagen : ");
 
-            Huurperiode newHuurperiode = new Huurperiode(huurperiodeStartDatum, huurperiodeAantalDagen);
-            Huurcontract newHuurcontract = new Huurcontract(null,newHuurperiode,huurder,huis);
+                Huurperiode newHuurperiode = new Huurperiode(huurperiodeStartDatum, huurperiodeAantalDagen);
+                Huurcontract newHuurcontract = new Huurcontract(null, newHuurperiode, huurder, huis);
 
-            Console.WriteLine($"HUURCONTRACT:{newHuurcontract.Id}: huisId={newHuurcontract.Huis.Id},huurderId={newHuurcontract.Huurder.Id},start={newHuurcontract.Huurperiode.StartDatum},einde={newHuurcontract.Huurperiode.EindDatum}");
-            return newHuurcontract;
+                Console.WriteLine($"HUURCONTRACT:{newHuurcontract.Id}: huisId={newHuurcontract.Huis.Id},huurderId={newHuurcontract.Huurder.Id},start={newHuurcontract.Huurperiode.StartDatum},einde={newHuurcontract.Huurperiode.EindDatum}");
+                contractenRepository.VoegContractToe(newHuurcontract);
+                return newHuurcontract;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{ex}");
+                enterToContinue();
+                MainMenu();
+            }
+            return MaakContractAan(huizenRepository, huurderRepository, contractenRepository);
         }
+        
         //Aanpasen
-        static void PasHuisAanVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        static void PasHuisAanVanId(HuizenRepositoryEF huizenRepository)
         {
-            Console.WriteLine("Update-Huis");
-            Huis huis = GeefHuisVanId(context, huizenRepository, huurderRepository, contractenRepository);
-            Huis updatedHuis = MaakHuisAan(context, huizenRepository, huurderRepository, contractenRepository);
-            updatedHuis.ZetId(huis.Id);
-            huizenRepository.UpdateHuis(updatedHuis);
+            try
+            {
+                Console.WriteLine("Update-Huis");
+                Huis huis = GeefHuisVanId(huizenRepository);
+                Huis updatedHuis = MaakHuisAan(huizenRepository);
+                updatedHuis.ZetId(huis.Id);
+                huizenRepository.UpdateHuis(updatedHuis);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"PasHuisAanVanId:  {ex}");
+                enterToContinue();
+                MainMenu();
+            }
         }
-        static void PasHuurderAanVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        static void PasHuurderAanVanId(HuurderRepositoryEF huurderRepository)
         {
-            Console.WriteLine("Update-Huurder");
-            Huurder huurder = GeefHuurderVanId(context, huizenRepository, huurderRepository, contractenRepository);
-            Huurder updatedHuurder = MaakHuurderAan(context, huizenRepository, huurderRepository, contractenRepository);
-            updatedHuurder.ZetId(huurder.Id);
-            huurderRepository.UpdateHuurder(updatedHuurder);
+            try
+            {
+                Console.WriteLine("Update-Huurder");
+                Huurder huurder = GeefHuurderVanId(huurderRepository);
+                Huurder updatedHuurder = MaakHuurderAan(huurderRepository);
+                updatedHuurder.ZetId(huurder.Id);
+                huurderRepository.UpdateHuurder(updatedHuurder);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"PasHuurderAanVanId:  {ex}");
+                enterToContinue();
+                MainMenu();
+            }
         }
-        static void PasContractAanVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
+        static void PasContractAanVanId(HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
         {
-            Console.WriteLine("Update-Contract");
-            Huurcontract huurcontract = GeefContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
-            Huurcontract updatedHuurcontract = MaakContractAan(context, huizenRepository, huurderRepository, contractenRepository);
-            updatedHuurcontract.ZetId(huurcontract.Id);
-            contractenRepository.UpdateContract(updatedHuurcontract);
+            try
+            {
+                Console.WriteLine("Update-Contract");
+                Huurcontract huurcontract = GeefContractVanId(contractenRepository);
+                Huurcontract updatedHuurcontract = MaakContractAan(huizenRepository, huurderRepository, contractenRepository);
+                updatedHuurcontract.ZetId(huurcontract.Id);
+                contractenRepository.UpdateContract(updatedHuurcontract);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"PasContractAanVanId:  {ex}");
+                enterToContinue();
+                MainMenu();
+            }
+            
         }
+        
         //Verwijderen
         static void VerwijderHuisVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
         {
-            Console.Write($"huisen kunnen niet verwijderd worden");
+            try
+            {
+                Console.Write($"huisen kunnen niet verwijderd worden");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"VerwijderHuisVanId:  {ex}");
+                enterToContinue();
+                MainMenu();
+            }
+            
         }
         static void VerwijderHuurderVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
         {
-            Console.Write($"hurders kunnen niet verwijderd worden");
+            try
+            {
+                Console.Write($"hurders kunnen niet verwijderd worden");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"VerwijderHuurderVanId:  {ex}");
+                enterToContinue();
+                MainMenu();
+            }
         }
         static void VerwijderContractVanId(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
         {
-
-            Console.Write($"contractId: ");
-            string contractId = Console.ReadLine();
-
-            if (contractenRepository.HeeftContract(contractId))
+            try
             {
-                Console.Clear();
-                Console.WriteLine($"geen contract gevonden onder {contractId}");
-                VraagvoorTerugNaarMainMenuTeGaan(context, huizenRepository, huurderRepository, contractenRepository);
-                GeefContractVanId(context, huizenRepository, huurderRepository, contractenRepository);
+                Console.Write($"contractId: ");
+                string contractId = Console.ReadLine();
+
+                if (contractenRepository.HeeftContract(contractId))
+                {
+                    Console.Clear();
+                    Console.WriteLine($"geen contract gevonden onder {contractId}");
+                    VraagvoorTerugNaarMainMenuTeGaan();
+                    GeefContractVanId(contractenRepository);
+                }
+                contractenRepository.AnnuleerContract(contractenRepository.GeefContract(contractId));
+                Console.WriteLine("enter om door te gaan");
+                Console.Read();
             }
-            contractenRepository.AnnuleerContract(contractenRepository.GeefContract(contractId));
-            Console.WriteLine("enter om door te gaan");
-            Console.Read();
+            catch (Exception ex)
+            {
+                Console.WriteLine($"VerwijderContractVanId: {ex}");
+                enterToContinue();
+                MainMenu();
+            }
         }
-        //Alles Opvragen
-        //static void GeefAlleHuisen(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
-        //{
-        //}
-        //static void GeefAlleHuurders(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
-        //{
-        //}
-        //static void GeefAlleContracten(ParkeerOpgaveContext context, HuizenRepositoryEF huizenRepository, HuurderRepositoryEF huurderRepository, ContractenRepositoryEF contractenRepository)
-        //{
-        //}
+        
 
 
 

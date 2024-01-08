@@ -41,7 +41,13 @@ namespace ParkDataLayer.Repositories
 
         public bool HeeftHuis(int id)
         {
-            throw new NotImplementedException();
+            var dataHuis = context.huis.Where(h => h.Id==id).AsNoTracking().FirstOrDefault();
+            bool heeftHuis = false;
+            if(dataHuis is DataHuis)
+            {
+                heeftHuis = true;
+            }
+            return heeftHuis;
         }
 
         public void UpdateHuis(Huis huis)
